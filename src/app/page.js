@@ -13,7 +13,7 @@ export default function Home() {
         if (!state.user) {
             router.push("/account/login");
         }
-    }, [state.user]);
+    }, [state.user, router]);
 
     useEffect(() => {
         const getLocations = async () => {
@@ -69,7 +69,7 @@ export default function Home() {
                     {locations.length ? (
                         <ul className='list-disc main'>
                             {locations.map((location) => (
-                                <Location location={location} />
+                                <Location key={location.id} location={location} />
                             ))}
                         </ul>
                     ) : (
@@ -91,7 +91,7 @@ function Location({ location }) {
             <span>{location.name}</span>
             <ul className='list-disc'>
                 {location.children.map((child) => (
-                    <Location location={child} />
+                    <Location key={child.id} location={child} />
                 ))}
             </ul>
         </li>
