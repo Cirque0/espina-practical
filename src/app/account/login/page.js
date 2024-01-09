@@ -1,13 +1,26 @@
 "use client";
 
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "@/utils/AuthContext";
+import { useRouter } from "next/navigation";
 
-export default function Page() {
+export default function Login() {
+    const router = useRouter();
+
+    const { state, dispatch } = useContext(AuthContext);
+
+    useEffect(() => {
+        if(state.user) {
+            router.push('/')
+        }
+    }, [state.user])
+
     const [form, setForm] = useState({
         username: "",
         password: "",
     });
+
+    const [error, setError] = useState('');
 
     const changeForm = (e) => {
         setForm((form) => ({
@@ -16,9 +29,36 @@ export default function Page() {
         }));
     };
 
+    const submitForm = async (e) => {
+        e.preventDefault();
+        setError('');
+        try {
+            const res = await fetch(`${location.origin}/api/account/login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(form),
+            })
+
+            const data = await res.json()
+            if (data.message) {
+                setError(data.message);
+            }
+            else {
+                dispatch({type: 'login', user: data});
+                window.sessionStorage.setItem('user', JSON.stringify(data));
+            }
+        }
+        catch(error) {
+            console.log(error)
+        }
+
+    }
+
     return (
         <div className='min-h-screen flex justify-center items-center'>
-            <form className="flex flex-col gap-2 items-center">
+            <form onSubmit={submitForm} className="flex flex-col gap-2 items-center">
                 <p className="font-bold text-xl text-center">Login</p>
                 <label htmlFor='username'>
                     <p className="font-bold">Username</p>
@@ -43,6 +83,7 @@ export default function Page() {
                     />
                 </label>
                 <button className="w-fit bg-black text-white p-2 text-xs uppercase tracking-widest rounded">Login</button>
+                {error}
             </form>
         </div>
     );
