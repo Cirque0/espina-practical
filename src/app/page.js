@@ -13,7 +13,7 @@ export default function Home() {
         if (!state.user) {
             router.push("/account/login");
         }
-    }, [state.user]);
+    }, [state.user, router]);
 
     useEffect(() => {
         const getLocations = async () => {
