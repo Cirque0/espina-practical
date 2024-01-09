@@ -1,0 +1,32 @@
+'use client';
+
+import { AuthContext } from "@/utils/AuthContext";
+import { useReducer } from "react";
+
+export default function ContextProviders({ children }) {
+    const [state, dispatch] = useReducer(
+        (prevState, action) => {
+            switch(action.type) {
+                case 'login':
+                    return {
+                        ...prevState,
+                        user: action.user,
+                    }
+                case 'logout':
+                    return {
+                        ...prevState,
+                        user: null,
+                    }
+            }
+        },
+        {
+            user: null,
+        }
+    )
+
+    return (
+        <AuthContext.Provider value={{state, dispatch}}>
+            {children}
+        </AuthContext.Provider>
+    )
+}
