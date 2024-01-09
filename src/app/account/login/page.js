@@ -13,7 +13,7 @@ export default function Login() {
         if(state.user) {
             router.push('/')
         }
-    }, [state.user, router])
+    }, [state.user])
 
     const [form, setForm] = useState({
         username: "",
